@@ -25,6 +25,9 @@ export default async function AdminLayout({
             
             <nav className="flex items-center gap-2">
               <Button variant="ghost" asChild>
+                <Link href="/admin/draws">Draws</Link>
+              </Button>
+              <Button variant="ghost" asChild>
                 <Link href="/dashboard">Back to App</Link>
               </Button>
               <form action={logout}>

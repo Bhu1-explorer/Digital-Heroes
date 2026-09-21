@@ -14,6 +14,17 @@ export default async function Home() {
     .eq("active", true)
     .limit(3)
 
+  // Fetch current jackpot (from the latest published draw's carry out)
+  const { data: latestDraw } = await supabase
+    .from("draws")
+    .select("jackpot_carry_out")
+    .eq("status", "published")
+    .order("month", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const currentJackpot = latestDraw?.jackpot_carry_out || 0
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       {/* Hero Section */}
@@ -32,6 +43,49 @@ export default async function Home() {
             <Button size="lg" variant="outline" className="text-lg h-14 px-8 bg-white" asChild>
               <Link href="/charities">View Charities</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works Section */}
+      <section className="py-20 px-4 bg-white border-y-2 border-border">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-4xl font-heading font-bold mb-4">How the Draw Works</h2>
+          <p className="text-lg text-muted-foreground font-medium mb-12 max-w-2xl mx-auto">
+            Your 5 most recent golf scores become your entry into the monthly prize draw.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="border-2 border-ink p-6 rounded-2xl relative">
+              <div className="absolute -top-4 -left-4 bg-secondary text-secondary-foreground font-bold size-8 rounded-full border-2 border-ink flex items-center justify-center">1</div>
+              <h3 className="font-bold text-xl mb-2">Play & Log</h3>
+              <p className="text-sm text-muted-foreground">Log your scores throughout the month. We keep your latest 5 distinct scores.</p>
+            </div>
+            <div className="border-2 border-ink p-6 rounded-2xl relative">
+              <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground font-bold size-8 rounded-full border-2 border-ink flex items-center justify-center">2</div>
+              <h3 className="font-bold text-xl mb-2">The Draw</h3>
+              <p className="text-sm text-muted-foreground">On the 1st of every month, 5 unique numbers (1-45) are drawn.</p>
+            </div>
+            <div className="border-2 border-ink p-6 rounded-2xl relative">
+              <div className="absolute -top-4 -left-4 bg-success text-success-foreground font-bold size-8 rounded-full border-2 border-ink flex items-center justify-center">3</div>
+              <h3 className="font-bold text-xl mb-2">Win Prizes</h3>
+              <p className="text-sm text-muted-foreground">Match 3, 4, or all 5 numbers to win a share of the tier's prize pool!</p>
+            </div>
+          </div>
+
+          <div className="bg-muted p-8 rounded-2xl border-2 border-ink text-left md:flex items-center justify-between gap-8">
+            <div className="mb-6 md:mb-0">
+              <h3 className="text-2xl font-bold mb-2">Current Jackpot</h3>
+              <p className="text-muted-foreground">
+                If nobody matches 5 numbers, the top tier prize rolls over to the next month's jackpot.
+              </p>
+            </div>
+            <div className="shrink-0 text-center">
+              <div className="text-5xl font-display font-bold text-primary">
+                ${(currentJackpot / 100).toFixed(2)}
+              </div>
+              <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mt-2">To be won</div>
+            </div>
           </div>
         </div>
       </section>

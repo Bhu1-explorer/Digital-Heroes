@@ -25,6 +25,18 @@ export default async function DashboardPage() {
     .eq("user_id", profile.id)
     .order("played_on", { ascending: false })
 
+  // Fetch user's draw entries
+  const { data: entries } = await supabase
+    .from("draw_entries")
+    .select(`match_count, draws(month)`)
+    .eq("user_id", profile.id)
+
+  // Fetch user's winnings
+  const { data: winners } = await supabase
+    .from("winners")
+    .select(`tier, prize_amount, payment_status, draws(month)`)
+    .eq("user_id", profile.id)
+
   const renewalDate = subscription?.current_period_end 
     ? new Date(subscription.current_period_end).toLocaleDateString()
     : "N/A"
@@ -62,13 +74,27 @@ export default async function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center py-6 text-center">
-                  <div className="size-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                    <Ticket className="size-8 text-muted-foreground" />
+                {entries && entries.length > 0 ? (
+                  <div className="space-y-4 py-2">
+                    <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
+                      <span className="font-bold text-muted-foreground">Draws Entered</span>
+                      <span className="font-bold">{entries.length}</span>
+                    </div>
+                    {/* Assuming upcoming draw is the 1st of next month */}
+                    <div className="flex justify-between items-center pb-2">
+                      <span className="font-bold text-muted-foreground">Next Draw</span>
+                      <span className="font-bold">1st of next month</span>
+                    </div>
                   </div>
-                  <h3 className="font-bold">No draws yet</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Your first entry will appear when the next draw is simulated.</p>
-                </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <div className="size-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                      <Ticket className="size-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold">No draws yet</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Your first entry will appear when the next draw is simulated.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -79,13 +105,35 @@ export default async function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center py-6 text-center">
-                  <div className="size-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                    <CoinStack className="size-8 text-muted-foreground" />
+                {winners && winners.length > 0 ? (
+                  <div className="space-y-4 py-2">
+                    <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
+                      <span className="font-bold text-muted-foreground">Total Won</span>
+                      <span className="font-display text-xl text-success">
+                        ${(winners.reduce((acc, w) => acc + w.prize_amount, 0) / 100).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Prizes</div>
+                      {winners.slice(0, 3).map((w, i) => (
+                        <div key={i} className="flex justify-between items-center text-sm">
+                          <span>{new Date((w.draws as any).month).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} (Match {w.tier})</span>
+                          <span className={`font-bold ${w.payment_status === 'paid' ? 'text-success' : 'text-accent'}`}>
+                            {w.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="font-bold">Nothing to show</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Winning matches and prize payouts will be listed here.</p>
-                </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <div className="size-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                      <CoinStack className="size-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold">Nothing to show</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Winning matches and prize payouts will be listed here.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

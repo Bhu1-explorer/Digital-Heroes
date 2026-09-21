@@ -43,30 +43,47 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
-        const userId = session.client_reference_id || session.metadata?.userId
-        const planType = session.metadata?.planType || "monthly"
+        const userId = session.client_reference_id || session.metadata?.userId || null
         
-        if (!userId) throw new Error("No userId found in session")
-
-        const subId = getSubscriptionId(session)
-        if (subId) {
-          const subscription = await stripe.subscriptions.retrieve(subId)
-          const currentPeriodEnd = subscription.items?.data?.[0]?.current_period_end 
-            ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
-            : new Date((subscription as any).current_period_end * 1000).toISOString()
-
-          await supabase
-            .from("subscriptions")
-            .upsert({
+        if (session.mode === "payment") {
+          // Process one-off donation
+          const charityId = session.metadata?.charityId
+          const amountStr = session.metadata?.amount
+          
+          if (charityId && amountStr) {
+            await supabase.from("donations").insert({
               user_id: userId,
-              stripe_customer_id: session.customer as string,
-              stripe_subscription_id: subscription.id,
-              status: subscription.status,
-              plan_type: planType,
-              current_period_end: currentPeriodEnd,
-              cancel_at_period_end: subscription.cancel_at_period_end,
-              updated_at: new Date().toISOString(),
-            }, { onConflict: "user_id" })
+              charity_id: charityId,
+              amount: parseInt(amountStr, 10),
+              status: "completed"
+            })
+          }
+        } else if (session.mode === "subscription") {
+          // Process subscription setup
+          const planType = session.metadata?.planType || "monthly"
+          
+          if (!userId) throw new Error("No userId found in subscription session")
+
+          const subId = getSubscriptionId(session)
+          if (subId) {
+            const subscription = await stripe.subscriptions.retrieve(subId)
+            const currentPeriodEnd = subscription.items?.data?.[0]?.current_period_end 
+              ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+              : new Date((subscription as any).current_period_end * 1000).toISOString()
+
+            await supabase
+              .from("subscriptions")
+              .upsert({
+                user_id: userId,
+                stripe_customer_id: session.customer as string,
+                stripe_subscription_id: subscription.id,
+                status: subscription.status,
+                plan_type: planType,
+                current_period_end: currentPeriodEnd,
+                cancel_at_period_end: subscription.cancel_at_period_end,
+                updated_at: new Date().toISOString(),
+              }, { onConflict: "user_id" })
+          }
         }
         break
       }

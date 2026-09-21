@@ -63,4 +63,45 @@ export class StripeProvider implements PaymentProvider {
 
     return { url: session.url }
   }
+
+  async createDonationSession(
+    charityId: string,
+    amount: number, // minor units (cents)
+    successUrl: string,
+    cancelUrl: string,
+    userId?: string,
+    userEmail?: string
+  ): Promise<CheckoutSessionResult> {
+    const session = await this.stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: userEmail,
+      client_reference_id: userId,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Charity Donation",
+            },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        type: "donation",
+        charityId,
+        userId: userId || "",
+        amount: amount.toString()
+      }
+    })
+
+    if (!session.url) {
+      throw new Error("Failed to create Stripe session")
+    }
+
+    return { url: session.url }
+  }
 }

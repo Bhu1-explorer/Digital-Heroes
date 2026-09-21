@@ -12,7 +12,7 @@ export async function requireUser() {
   // Fetch profile to check role
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role, full_name, charity_id, charity_percent")
+    .select("id, role, full_name, charity_id, charity_percent")
     .eq("id", user.id)
     .single()
 

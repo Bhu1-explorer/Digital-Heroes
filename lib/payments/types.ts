@@ -16,4 +16,13 @@ export interface PaymentProvider {
     customerId: string, 
     returnUrl: string
   ): Promise<{ url: string }>
+
+  createDonationSession(
+    charityId: string,
+    amount: number, // minor units (cents)
+    successUrl: string,
+    cancelUrl: string,
+    userId?: string, // optional for guest donations
+    userEmail?: string
+  ): Promise<CheckoutSessionResult>
 }

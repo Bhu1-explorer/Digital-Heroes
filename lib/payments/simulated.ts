@@ -28,4 +28,22 @@ export class SimulatedProvider implements PaymentProvider {
     
     return { url: url.toString() }
   }
+
+  async createDonationSession(
+    charityId: string,
+    amount: number,
+    successUrl: string,
+    cancelUrl: string,
+    userId?: string,
+    userEmail?: string
+  ): Promise<CheckoutSessionResult> {
+    const url = new URL("/simulated-checkout", process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000")
+    url.searchParams.set("mode", "payment")
+    url.searchParams.set("price", amount.toString())
+    url.searchParams.set("charityId", charityId)
+    url.searchParams.set("successUrl", successUrl)
+    url.searchParams.set("cancelUrl", cancelUrl)
+    
+    return { url: url.toString() }
+  }
 }

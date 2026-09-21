@@ -8,7 +8,7 @@ const signupSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6, "Password must be at least 6 characters"),
   fullName: z.string().min(2, "Name is required"),
-  charityId: z.string().uuid("Please select a charity"),
+  charityId: z.string().min(1, "Please select a charity"),
   charityPercent: z.coerce.number().min(10, "Minimum 10% is required").max(100),
 })
 

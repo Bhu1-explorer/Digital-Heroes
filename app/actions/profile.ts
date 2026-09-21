@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache"
 
 const updateProfileSchema = z.object({
   fullName: z.string().min(2, "Name is required"),
-  charityId: z.string().uuid("Please select a charity"),
+  charityId: z.string().min(1, "Please select a charity"),
   charityPercent: z.coerce.number().min(10, "Minimum 10% is required").max(100),
 })
 

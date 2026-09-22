@@ -13,10 +13,10 @@ export default async function PublicLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b-2 border-border bg-white">
+      <header className="sticky top-0 z-50 w-full border-b-2 border-border bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-6">
-            <Link href="/" className="font-heading text-xl font-bold tracking-tight text-ink hover:text-primary transition-colors">
+            <Link href="/" className="font-heading text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors">
               Digital Heroes
             </Link>
           </div>
@@ -51,11 +51,11 @@ export default async function PublicLayout({
           </nav>
         </div>
         {/* Mobile secondary nav for links since it's hidden on very small screens in the main bar */}
-        <div className="sm:hidden border-t-2 border-border/50 px-4 py-2 flex justify-center gap-6 bg-muted/20">
-          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-ink">
+        <div className="sm:hidden border-t-2 border-border/50 px-4 py-2 flex justify-center gap-6 bg-card">
+          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-foreground">
             Home
           </Link>
-          <Link href="/charities" className="text-sm font-semibold text-muted-foreground hover:text-ink">
+          <Link href="/charities" className="text-sm font-semibold text-muted-foreground hover:text-foreground">
             Browse Charities
           </Link>
         </div>

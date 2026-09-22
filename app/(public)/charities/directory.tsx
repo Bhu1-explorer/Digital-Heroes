@@ -5,8 +5,7 @@ import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { HeartHands } from "@/components/illustrations"
-import Image from "next/image"
+import { CharityImage } from "@/components/charities/charity-image"
 
 interface Charity {
   id: string
@@ -64,13 +63,12 @@ export function CharityDirectory({ charities }: { charities: Charity[] }) {
           {filtered.map((c, idx) => (
             <Link key={c.id} href={`/charities/${c.slug}`} className="block group">
               <Card className="h-full transition-all group-hover:shadow-flat group-hover:-translate-y-1 overflow-hidden flex flex-col" style={{ animationDelay: `${idx * 50}ms` }}>
-                <div className="relative h-48 w-full border-b-2 border-border bg-muted flex items-center justify-center overflow-hidden">
-                  {c.image_url ? (
-                    <Image src={c.image_url} alt={c.name} fill className="object-cover" />
-                  ) : (
-                    <HeartHands className="size-24 text-muted-foreground opacity-50" />
-                  )}
-                </div>
+                <CharityImage 
+                  id={c.id} 
+                  name={c.name} 
+                  imageUrl={c.image_url} 
+                  className="h-48 w-full border-b-2 border-border" 
+                />
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded-md">

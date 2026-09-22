@@ -3,7 +3,6 @@ import { createCheckoutSession } from "@/app/actions/payments"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Ticket } from "@/components/illustrations"
-
 export default async function SubscribePage() {
   const { profile } = await requireUser()
 
@@ -15,8 +14,8 @@ export default async function SubscribePage() {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <div className="w-full max-w-4xl space-y-8">
-        <div className="text-center">
+      <div className="w-full max-w-4xl space-y-8 animate-slide-in">
+        <div className="text-center bg-card border-2 border-border p-8 rounded-3xl shadow-flat max-w-2xl mx-auto">
           <h1 className="text-4xl font-heading font-bold">Choose Your Plan</h1>
           <p className="mt-2 text-muted-foreground font-medium text-lg">
             Hi {profile.full_name}, subscribe to start playing and supporting your charity.

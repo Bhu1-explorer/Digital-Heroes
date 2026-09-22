@@ -1,8 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
-import { HeartHands } from "@/components/illustrations"
+import { CharityImage } from "@/components/charities/charity-image"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { DonationForm } from "@/components/charities/donation-form"
@@ -60,13 +59,13 @@ export default async function CharityProfilePage({
   return (
     <div className="container mx-auto p-4 py-12 max-w-5xl space-y-12">
       <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="relative h-80 w-full rounded-3xl border-4 border-border bg-muted overflow-hidden shadow-flat flex items-center justify-center">
-          {charity.image_url ? (
-            <Image src={charity.image_url} alt={charity.name} fill className="object-cover" />
-          ) : (
-            <HeartHands className="size-32 text-muted-foreground opacity-50" />
-          )}
-        </div>
+        <CharityImage 
+          id={charity.id} 
+          name={charity.name} 
+          imageUrl={charity.image_url} 
+          className="h-80 w-full rounded-3xl border-4 border-border shadow-flat" 
+          iconClassName="size-32 text-muted-foreground opacity-50"
+        />
         
         <div className="space-y-6">
           <div>

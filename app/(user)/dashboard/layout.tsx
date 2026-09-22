@@ -15,7 +15,7 @@ export default async function DashboardLayout({
   const { profile } = await requireActiveSubscription()
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F0]/85 relative">
       <header className="border-b-2 border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/dashboard" className="font-heading font-bold text-xl text-primary">
@@ -46,7 +46,7 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main className="flex-1 bg-background">
+      <main className="flex-1">
         {children}
       </main>
     </div>

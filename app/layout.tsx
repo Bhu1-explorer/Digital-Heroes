@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Figtree, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
+import { LeafBurst } from "@/components/LeafBurst";
+import { ForestBackground } from "@/components/ForestBackground";
 
 const fontSans = Figtree({
   variable: "--font-sans",
@@ -36,6 +38,8 @@ export default function RootLayout({
       className={`${fontSans.variable} ${fontHeading.variable} ${fontDisplay.variable} antialiased h-full`}
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
+        <ForestBackground />
+        <LeafBurst />
         {children}
       </body>
     </html>

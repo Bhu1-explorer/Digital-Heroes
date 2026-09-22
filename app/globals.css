@@ -46,39 +46,39 @@
 }
 
 :root {
-  --background: #EDEDEA;
-  --foreground: #1A1A1A; /* ink */
+  --background: #DCE5DD; /* Sky/mist tone from ForestBackground */
+  --foreground: #2A3428; /* pine-ink */
   
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
+  --card: #EFEEE3; /* warm cream-parchment */
+  --card-foreground: #2A3428;
   
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
+  --popover: #EFEEE3;
+  --popover-foreground: #2A3428;
   
-  --primary: #3B5BFF;
+  --primary: #3D6B4F; /* rich forest green */
   --primary-foreground: #FFFFFF;
   
-  --secondary: #F7A8C4;
-  --secondary-foreground: #1A1A1A;
+  --secondary: #B9C9BC; /* muted sage */
+  --secondary-foreground: #2A3428;
   
-  --accent: #FFC940;
-  --accent-foreground: #1A1A1A;
+  --accent: #C98A3E; /* warm amber/copper */
+  --accent-foreground: #2A3428;
 
-  --success: #34C08B;
-  --success-foreground: #1A1A1A;
+  --success: #5F7A66; /* mossy sage-green */
+  --success-foreground: #FFFFFF;
   
-  --warning: #FFC940;
-  --warning-foreground: #1A1A1A;
+  --warning: #C98A3E; /* amber */
+  --warning-foreground: #2A3428;
   
-  --muted: #e4e4e1;
-  --muted-foreground: #5e5e5e;
+  --muted: #DCE5DD; /* sky/mist tone */
+  --muted-foreground: #5F7A66; /* distant pine */
   
-  --destructive: #ff5b5b;
+  --destructive: #B5573D; /* rust/terracotta */
   --destructive-foreground: #FFFFFF;
   
-  --border: #1A1A1A; /* ink */
-  --input: #1A1A1A;
-  --ring: #1A1A1A;
+  --border: #2A3428; /* pine-ink */
+  --input: #2A3428;
+  --ring: #2A3428;
   
   --radius: 1rem; /* 16px */
 }

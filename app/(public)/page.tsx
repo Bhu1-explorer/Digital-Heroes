@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { CharityImage } from "@/components/charities/charity-image"
 
 export default async function Home() {
   const supabase = await createClient()
@@ -9,7 +10,7 @@ export default async function Home() {
   // Fetch featured charities
   const { data: featuredCharities } = await supabase
     .from("charities")
-    .select("id, name, slug, description, category")
+    .select("id, name, slug, description, category, image_url")
     .eq("is_featured", true)
     .eq("active", true)
     .limit(3)
@@ -28,9 +29,9 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center p-4 py-20 bg-muted/30">
-        <div className="max-w-3xl space-y-6">
-          <h1 className="text-5xl md:text-7xl font-heading font-black tracking-tight text-ink">
+      <section className="flex-1 flex flex-col items-center justify-center text-center p-4 py-20">
+        <div className="max-w-3xl space-y-6 bg-card border-2 border-border p-8 md:p-12 rounded-[2rem] shadow-flat animate-slide-in">
+          <h1 className="text-5xl md:text-7xl font-heading font-black tracking-tight text-foreground">
             Play Golf. <span className="text-primary block md:inline">Do Good.</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
@@ -48,8 +49,8 @@ export default async function Home() {
       </section>
 
       {/* How it Works Section */}
-      <section className="py-20 px-4 bg-white border-y-2 border-border">
-        <div className="container mx-auto max-w-4xl text-center">
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-4xl text-center bg-card border-2 border-border p-8 md:p-12 rounded-[2rem] shadow-flat animate-slide-in" style={{ animationDelay: '100ms' }}>
           <h2 className="text-4xl font-heading font-bold mb-4">How the Draw Works</h2>
           <p className="text-lg text-muted-foreground font-medium mb-12 max-w-2xl mx-auto">
             Your 5 most recent golf scores become your entry into the monthly prize draw.
@@ -93,7 +94,7 @@ export default async function Home() {
       {/* Featured Charities */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 bg-card border-2 border-border p-8 rounded-[2rem] shadow-flat animate-slide-in max-w-3xl mx-auto" style={{ animationDelay: '200ms' }}>
             <h2 className="text-4xl font-heading font-bold mb-4">Featured Partners</h2>
             <p className="text-muted-foreground font-medium text-lg max-w-2xl mx-auto">
               Choose who you play for. 10% or more of your subscription goes directly to the charity of your choice.
@@ -103,7 +104,13 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-6">
             {featuredCharities?.map(charity => (
               <Link key={charity.id} href={`/charities/${charity.slug}`} className="block group">
-                <Card className="h-full transition-all group-hover:shadow-flat group-hover:-translate-y-1">
+                <Card className="h-full transition-all group-hover:shadow-flat group-hover:-translate-y-1 overflow-hidden flex flex-col">
+                  <CharityImage 
+                    id={charity.id} 
+                    name={charity.name} 
+                    imageUrl={charity.image_url} 
+                    className="h-40 w-full border-b-2 border-border" 
+                  />
                   <CardHeader>
                     <div className="mb-2">
                       <span className="text-xs font-bold uppercase tracking-wider text-secondary bg-secondary/10 px-2 py-1 rounded-md">

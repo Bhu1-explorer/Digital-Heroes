@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { signup } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,20 +14,18 @@ interface Charity {
 }
 
 export function SignupForm({ charities }: { charities: Charity[] }) {
-  const [loading, setLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   
   const [charityId, setCharityId] = useState<string>("")
   const [charityPercent, setCharityPercent] = useState<number>(10)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
     
     if (!charityId) {
       setError("Please select a charity")
-      setLoading(false)
       return
     }
 
@@ -35,11 +33,12 @@ export function SignupForm({ charities }: { charities: Charity[] }) {
     formData.append("charityId", charityId)
     formData.append("charityPercent", charityPercent.toString())
 
-    const result = await signup(formData)
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-    }
+    startTransition(async () => {
+      const result = await signup(formData)
+      if (result?.error) {
+        setError(result.error)
+      }
+    })
   }
 
   return (
@@ -101,8 +100,8 @@ export function SignupForm({ charities }: { charities: Charity[] }) {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" size="lg" disabled={loading}>
-        {loading ? <Loader2Icon className="mr-2 animate-spin" /> : "Sign Up"}
+      <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+        {isPending ? <Loader2Icon className="mr-2 animate-spin" /> : "Sign Up"}
       </Button>
     </form>
   )

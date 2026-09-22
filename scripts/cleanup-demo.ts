@@ -26,6 +26,23 @@ async function run() {
   const demoUsers = users.users.filter(u => u.email?.endsWith("@demo.digitalheroes.test"))
   
   for (const user of demoUsers) {
+    // 1. Delete storage files for this user
+    const { data: listData, error: listFilesError } = await supabase.storage.from("winner-proofs").list(user.id)
+    if (!listFilesError && listData) {
+      for (const item of listData) {
+        if (item.id) { // it's a folder, need to list inside it
+          const { data: innerList } = await supabase.storage.from("winner-proofs").list(`${user.id}/${item.name}`)
+          if (innerList) {
+            const filesToRemove = innerList.map(f => `${user.id}/${item.name}/${f.name}`)
+            await supabase.storage.from("winner-proofs").remove(filesToRemove)
+          }
+        } else {
+          await supabase.storage.from("winner-proofs").remove([`${user.id}/${item.name}`])
+        }
+      }
+    }
+
+    // 2. Delete the user
     const { error } = await supabase.auth.admin.deleteUser(user.id)
     if (error) {
       console.error(`Failed to delete user ${user.email}:`, error)

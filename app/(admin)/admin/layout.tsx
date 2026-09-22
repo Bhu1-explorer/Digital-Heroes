@@ -28,6 +28,9 @@ export default async function AdminLayout({
                 <Link href="/admin/draws">Draws</Link>
               </Button>
               <Button variant="ghost" asChild>
+                <Link href="/admin/winners">Winners</Link>
+              </Button>
+              <Button variant="ghost" asChild>
                 <Link href="/dashboard">Back to App</Link>
               </Button>
               <form action={logout}>

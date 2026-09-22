@@ -10,7 +10,7 @@ import { createPortalSession } from "@/app/actions/payments"
 export default async function DashboardPage() {
   const { profile, subscription } = await requireActiveSubscription()
   const supabase = await createClient()
-  
+
   // Fetch user's charity info
   const { data: charity } = await supabase
     .from("charities")
@@ -34,13 +34,13 @@ export default async function DashboardPage() {
   // Fetch user's winnings
   const { data: winners } = await supabase
     .from("winners")
-    .select(`tier, prize_amount, payment_status, draws(month)`)
+    .select(`tier, prize_amount, payment_status, verification_status, draws(month)`)
     .eq("user_id", profile.id)
 
-  const renewalDate = subscription?.current_period_end 
+  const renewalDate = subscription?.current_period_end
     ? new Date(subscription.current_period_end).toLocaleDateString()
     : "N/A"
-  
+
   const isCanceled = subscription?.cancel_at_period_end
 
   return (
@@ -49,9 +49,9 @@ export default async function DashboardPage() {
         <h1 className="text-4xl font-heading font-bold">Dashboard</h1>
         <p className="text-muted-foreground text-lg mt-1 font-medium">Welcome back, {profile.full_name}.</p>
       </div>
-      
+
       <div className="grid lg:grid-cols-3 gap-6">
-        
+
         {/* Left Column: Score Management */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-primary/20 ring-4 ring-primary/5">
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                     <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
                       <span className="font-bold text-muted-foreground">Total Won</span>
                       <span className="font-display text-xl text-success">
-                        ${(winners.reduce((acc, w) => acc + w.prize_amount, 0) / 100).toFixed(2)}
+                        ${(winners.filter(w => w.verification_status !== 'rejected').reduce((acc, w) => acc + w.prize_amount, 0) / 100).toFixed(2)}
                       </span>
                     </div>
                     <div className="space-y-2">
@@ -118,12 +118,18 @@ export default async function DashboardPage() {
                       {winners.slice(0, 3).map((w, i) => (
                         <div key={i} className="flex justify-between items-center text-sm">
                           <span>{new Date((w.draws as any).month).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} (Match {w.tier})</span>
-                          <span className={`font-bold ${w.payment_status === 'paid' ? 'text-success' : 'text-accent'}`}>
-                            {w.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                          <span className={`font-bold capitalize ${w.payment_status === 'paid' ? 'text-success' :
+                              w.verification_status === 'rejected' ? 'text-destructive' :
+                                'text-accent'
+                            }`}>
+                            {w.payment_status === 'paid' ? 'Paid' : (w.verification_status === 'rejected' ? 'Rejected' : 'Pending')}
                           </span>
                         </div>
                       ))}
                     </div>
+                    <Button asChild variant="outline" className="w-full mt-4">
+                      <Link href="/dashboard/winnings">View All Winnings</Link>
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 text-center">

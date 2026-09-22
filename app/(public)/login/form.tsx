@@ -1,27 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { login } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2Icon } from "lucide-react"
 
 export function LoginForm() {
-  const [loading, setLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
     
     const formData = new FormData(e.currentTarget)
-    const result = await login(formData)
-    
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-    }
+    startTransition(async () => {
+      const result = await login(formData)
+      if (result?.error) {
+        setError(result.error)
+      }
+    })
   }
 
   return (
@@ -44,8 +43,8 @@ export function LoginForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" size="lg" disabled={loading}>
-        {loading ? <Loader2Icon className="mr-2 animate-spin" /> : "Sign In"}
+      <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+        {isPending ? <Loader2Icon className="mr-2 animate-spin" /> : "Sign In"}
       </Button>
     </form>
   )

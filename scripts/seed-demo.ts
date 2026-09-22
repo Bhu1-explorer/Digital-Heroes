@@ -37,22 +37,25 @@ async function run() {
   // 1. Create 20 demo users
   for (let i = 1; i <= NUM_USERS; i++) {
     const email = `user${i}@demo.digitalheroes.test`
-    const { data: userAuth, error: authError } = await supabase.auth.admin.createUser({
-      email,
-      password: "password123",
-      email_confirm: true,
-      user_metadata: { full_name: `Demo User ${i}` }
-    })
-
-    if (authError) {
-      if (authError.message.includes("already registered")) {
+    let userAuth: any
+    try {
+      const result = await supabase.auth.admin.createUser({
+        email,
+        password: "password123",
+        email_confirm: true,
+        user_metadata: { full_name: `Demo User ${i}` }
+      })
+      if (result.error) throw result.error
+      userAuth = result.data.user
+    } catch (err: any) {
+      if (err.message?.includes("already registered") || err.code === 'email_exists') {
         console.log(`${email} already exists, skipping creation.`)
         continue
       }
-      throw authError
+      throw err
     }
 
-    const userId = userAuth.user.id
+    const userId = userAuth.id
 
     // Update profile
     await supabase.from("profiles").update({
@@ -121,33 +124,87 @@ async function run() {
 
   const drawId = draw.id
 
-  // Fetch some demo users to be winners
-  const { data: users } = await supabase.from("profiles")
+  // Fetch some demo users to be winners (need 5)
+  const { data: users, error: usersError } = await supabase.from("profiles")
     .select("id")
-    .like("id", "%%") // just get all
-    .limit(3)
+    .limit(5)
   
-  if (users && users.length >= 3) {
-    // Insert entries
-    for (let i = 0; i < 3; i++) {
-      const { data: entry } = await supabase.from("draw_entries").insert({
+  if (usersError) {
+    console.error("Failed to fetch users for winners:", usersError)
+    throw usersError
+  }
+  
+  if (users && users.length >= 5) {
+    // 1x1 transparent PNG
+    const pngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+    const pngBuffer = Buffer.from(pngBase64, "base64")
+
+    const states = [
+      { ver: "awaiting_proof", pay: "pending", needsUpload: false, note: null, paid_at: null },
+      { ver: "submitted", pay: "pending", needsUpload: true, note: null, paid_at: null },
+      { ver: "approved", pay: "pending", needsUpload: true, note: null, paid_at: null },
+      { ver: "approved", pay: "paid", needsUpload: true, note: null, paid_at: new Date().toISOString() },
+      { ver: "rejected", pay: "pending", needsUpload: true, note: "The screenshot is too blurry to read the numbers.", paid_at: null },
+    ]
+
+    for (let i = 0; i < 5; i++) {
+      const state = states[i]
+      const tier = i === 0 ? 5 : (i % 2 === 0 ? 4 : 3)
+      const prize = tier === 5 ? 40000 : (tier === 4 ? 35000 : 25000)
+
+      const { data: entry, error: entryError } = await supabase.from("draw_entries").insert({
         draw_id: drawId,
         user_id: users[i].id,
-        match_count: 4 - i, // match 4, 3, 2
-        scores_snapshot: [19, 23, 27, 29, 10 + i]
+        match_count: tier, 
+        scores_snapshot: [19, 23, 27, 29, 31]
       }).select("id").single()
 
-      if (entry && (4 - i) >= 3) {
-        // Insert winner for match 4 and 3
-        await supabase.from("winners").insert({
+      if (entryError) {
+        console.error("Failed to insert draw_entry:", entryError)
+        throw entryError
+      }
+
+      if (entry) {
+        // Insert winner
+        const { data: winner, error: winnerError } = await supabase.from("winners").insert({
           draw_id: drawId,
           user_id: users[i].id,
           draw_entry_id: entry.id,
-          tier: 4 - i,
-          prize_amount: (4 - i) === 4 ? 35000 : 25000,
-          verification_status: i === 0 ? "approved" : "awaiting_proof",
-          payment_status: i === 0 ? "paid" : "pending"
-        })
+          tier: tier,
+          prize_amount: prize,
+          verification_status: state.ver,
+          payment_status: state.pay,
+          admin_note: state.note,
+          paid_at: state.paid_at
+        }).select("id").single()
+
+        if (winnerError) {
+          console.error("Failed to insert winner:", winnerError)
+          throw winnerError
+        }
+
+        if (winner && state.needsUpload) {
+          const proofPath = `${users[i].id}/${winner.id}/demo_proof.png`
+          const { error: uploadError } = await supabase.storage.from("winner-proofs").upload(proofPath, pngBuffer, {
+            contentType: "image/png",
+            upsert: true
+          })
+
+          if (uploadError) {
+            console.error("Failed to upload proof to storage:", uploadError)
+            throw uploadError
+          }
+          
+          const { error: updateError } = await supabase.from("winners").update({
+            proof_path: proofPath,
+            proof_uploaded_at: new Date().toISOString()
+          }).eq("id", winner.id)
+
+          if (updateError) {
+            console.error("Failed to update winner with proof_path:", updateError)
+            throw updateError
+          }
+        }
       }
     }
   }

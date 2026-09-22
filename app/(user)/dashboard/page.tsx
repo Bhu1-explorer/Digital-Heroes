@@ -2,6 +2,7 @@ import { requireActiveSubscription } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { StatusBadge } from "@/components/ui/badge"
 import Link from "next/link"
 import { ScoreManager } from "@/components/dashboard/score-manager"
 import { HeartHands, CoinStack, Ticket } from "@/components/illustrations"
@@ -116,14 +117,9 @@ export default async function DashboardPage() {
                     <div className="space-y-2">
                       <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Prizes</div>
                       {winners.slice(0, 3).map((w, i) => (
-                        <div key={i} className="flex justify-between items-center text-sm">
+                        <div key={i} className="flex justify-between items-center text-sm pb-1">
                           <span>{new Date((w.draws as any).month).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} (Match {w.tier})</span>
-                          <span className={`font-bold capitalize ${w.payment_status === 'paid' ? 'text-success' :
-                              w.verification_status === 'rejected' ? 'text-destructive' :
-                                'text-accent'
-                            }`}>
-                            {w.payment_status === 'paid' ? 'Paid' : (w.verification_status === 'rejected' ? 'Rejected' : 'Pending')}
-                          </span>
+                          <StatusBadge status={w.payment_status === 'paid' ? 'paid' : (w.verification_status === 'rejected' ? 'rejected' : 'pending')} />
                         </div>
                       ))}
                     </div>
@@ -156,9 +152,7 @@ export default async function DashboardPage() {
                 <div>
                   <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-1">Status</div>
                   <div className="flex items-center gap-2">
-                    <div className={`size-3 rounded-full ${isCanceled ? 'bg-destructive' : 'bg-success'}`} />
-                    <span className="font-bold capitalize">{subscription?.status || 'Active'}</span>
-                    {isCanceled && <span className="text-xs font-bold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">Canceling</span>}
+                    <StatusBadge status={isCanceled ? 'canceled' : (subscription?.status || 'active')} />
                   </div>
                 </div>
                 <div>

@@ -5,7 +5,9 @@ import { uploadProof } from "@/app/actions/winners-user"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatusBadge } from "@/components/ui/badge"
+import { Trophy, Loader2Icon } from "lucide-react"
 
 export function WinningsManager({ winners }: { winners: any[] }) {
   const [isPending, startTransition] = useTransition()
@@ -34,8 +36,12 @@ export function WinningsManager({ winners }: { winners: any[] }) {
     <div className="space-y-6">
       {winners.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            No winnings yet. Keep playing to increase your chances!
+          <CardContent className="p-12 flex flex-col items-center justify-center text-center">
+            <div className="size-16 rounded-full bg-muted flex items-center justify-center mb-4">
+              <Trophy className="size-8 text-muted-foreground" />
+            </div>
+            <h3 className="font-bold text-lg mb-1">No winnings yet</h3>
+            <p className="text-muted-foreground">Keep playing to increase your chances!</p>
           </CardContent>
         </Card>
       ) : (
@@ -43,26 +49,7 @@ export function WinningsManager({ winners }: { winners: any[] }) {
           const isPaid = w.payment_status === "paid"
           const status = w.verification_status
           const monthStr = new Date(w.draws.month).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
-          
-          let badgeColor = "bg-muted text-muted-foreground"
-          let badgeText = "Pending"
-          
-          if (isPaid) {
-            badgeColor = "bg-success/20 text-success"
-            badgeText = "Paid"
-          } else if (status === "approved") {
-            badgeColor = "bg-success/20 text-success"
-            badgeText = "Approved, Payout Pending"
-          } else if (status === "submitted") {
-            badgeColor = "bg-accent/20 text-accent"
-            badgeText = "Under Review"
-          } else if (status === "rejected") {
-            badgeColor = "bg-destructive/20 text-destructive"
-            badgeText = "Rejected"
-          } else if (status === "awaiting_proof") {
-            badgeColor = "bg-primary/20 text-primary"
-            badgeText = "Awaiting Proof"
-          }
+          const statusStr = isPaid ? "paid" : status
 
           return (
             <Card key={w.id} className={status === "rejected" ? "border-destructive ring-2 ring-destructive/20" : ""}>
@@ -71,9 +58,7 @@ export function WinningsManager({ winners }: { winners: any[] }) {
                   <CardTitle>{monthStr} Draw - Match {w.tier}</CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">Prize: ${(w.prize_amount / 100).toFixed(2)}</p>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${badgeColor}`}>
-                  {badgeText}
-                </div>
+                <StatusBadge status={statusStr} />
               </CardHeader>
               <CardContent className="pb-4">
                 {status === "rejected" && w.admin_note && (
@@ -92,6 +77,7 @@ export function WinningsManager({ winners }: { winners: any[] }) {
                       <p className="text-sm text-destructive font-medium">{error}</p>
                     )}
                     <Button type="submit" disabled={isPending}>
+                      {isPending && uploadingId === w.id ? <Loader2Icon className="mr-2 animate-spin size-4" /> : null}
                       {isPending && uploadingId === w.id ? "Uploading..." : "Submit Proof"}
                     </Button>
                   </form>

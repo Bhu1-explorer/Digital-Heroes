@@ -105,9 +105,9 @@ export default async function AdminPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">£{(totalPaid / 100).toFixed(2)}</div>
+            <div className="text-2xl font-bold">${(totalPaid / 100).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              £{(totalPending / 100).toFixed(2)} pending
+              ${(totalPending / 100).toFixed(2)} pending
             </p>
           </CardContent>
         </Card>
@@ -118,7 +118,7 @@ export default async function AdminPage() {
             <Heart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">£{(totalCharityContributions / 100).toFixed(2)}</div>
+            <div className="text-2xl font-bold">${(totalCharityContributions / 100).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">Donations & MRR Share</p>
           </CardContent>
         </Card>
@@ -169,7 +169,7 @@ export default async function AdminPage() {
               {charityReports.map((cr, idx) => (
                 <div key={idx} className="flex justify-between items-center py-2 border-b last:border-0">
                   <span className="font-medium text-sm truncate pr-4">{cr.name}</span>
-                  <span className="font-bold whitespace-nowrap">£{(cr.total / 100).toFixed(2)}</span>
+                  <span className="font-bold whitespace-nowrap">${(cr.total / 100).toFixed(2)}</span>
                 </div>
               ))}
             </div>

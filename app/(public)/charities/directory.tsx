@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { HeartHands } from "@/components/illustrations"
 import Image from "next/image"
@@ -42,17 +43,14 @@ export function CharityDirectory({ charities }: { charities: Charity[] }) {
         />
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
-            <button
+            <Button
               key={cat}
+              variant={categoryFilter === cat ? "default" : "outline"}
               onClick={() => setCategoryFilter(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border-2 ${
-                categoryFilter === cat 
-                  ? "bg-primary text-primary-foreground border-primary shadow-flat-active" 
-                  : "bg-white text-foreground border-border hover:shadow-flat hover:-translate-y-0.5"
-              }`}
+              className="rounded-xl font-bold"
             >
               {cat}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

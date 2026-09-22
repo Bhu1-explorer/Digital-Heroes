@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Badge, StatusBadge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createCharity, updateCharity, deleteCharity, createCharityEvent, deleteCharityEvent } from "@/app/actions/admin-charities"
@@ -155,9 +155,7 @@ export function CharitiesClient({ charities, events }: { charities: Charity[], e
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">{c.category || "—"}</td>
                         <td className="px-4 py-3">
-                          <Badge variant={c.active ? "default" : "destructive"}>
-                            {c.active ? "Active" : "Inactive"}
-                          </Badge>
+                          <StatusBadge status={c.active ? "active" : "inactive"} />
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Button variant="ghost" size="sm" onClick={() => setEditingCharity(c)}>Edit</Button>

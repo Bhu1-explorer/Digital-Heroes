@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { approveWinner, rejectWinner, markWinnerPaid, getProofSignedUrl } from "@/app/actions/winners-admin"
 import { Button } from "@/components/ui/button"
+import { StatusBadge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
@@ -115,21 +116,10 @@ export function WinnersTable({ winners }: { winners: any[] }) {
                   <span className="text-success font-bold font-display">${(w.prize_amount / 100).toFixed(2)}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${
-                    w.verification_status === 'approved' ? 'bg-success/20 text-success' :
-                    w.verification_status === 'submitted' ? 'bg-accent/20 text-accent' :
-                    w.verification_status === 'rejected' ? 'bg-destructive/20 text-destructive' :
-                    'bg-muted text-muted-foreground'
-                  }`}>
-                    {w.verification_status}
-                  </span>
+                  <StatusBadge status={w.verification_status} />
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${
-                    w.payment_status === 'paid' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {w.payment_status}
-                  </span>
+                  <StatusBadge status={w.payment_status} />
                 </td>
                 <td className="px-4 py-3 text-right">
                   <Button variant="outline" size="sm" onClick={() => handleView(w)}>

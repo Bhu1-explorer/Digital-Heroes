@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { createClient as createAdminClient } from "@supabase/supabase-js"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Badge, StatusBadge } from "@/components/ui/badge"
 import { toggleUserRole } from "@/app/actions/admin-users"
 import Link from "next/link"
 
@@ -120,15 +120,16 @@ export default async function AdminUsersPage({
                       <td className="px-4 py-3 font-medium">{user.full_name || "Unknown"}</td>
                       <td className="px-4 py-3 text-muted-foreground">{userEmails[user.id] || "—"}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={user.role === "admin" ? "destructive" : "secondary"}>
+                        <Badge variant={user.role === "admin" ? "info" : "secondary"}>
                           {user.role}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
                         {sub ? (
-                          <Badge variant={sub.status === "active" ? "default" : "outline"}>
-                            {sub.plan_type} - {sub.status}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-xs uppercase tracking-wider">{sub.plan_type}</span>
+                            <StatusBadge status={sub.status} />
+                          </div>
                         ) : (
                           <span className="text-muted-foreground">None</span>
                         )}

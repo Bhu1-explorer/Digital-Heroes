@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Badge, StatusBadge } from "@/components/ui/badge"
 import { overrideSubscriptionStatus } from "@/app/actions/admin-subscriptions"
 import Link from "next/link"
 
@@ -96,9 +96,7 @@ export default async function AdminSubscriptionsPage({
                       </td>
                       <td className="px-4 py-3 capitalize">{sub.plan_type}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={sub.status === "active" ? "default" : "secondary"}>
-                          {sub.status}
-                        </Badge>
+                        <StatusBadge status={sub.status} />
                       </td>
                       <td className="px-4 py-3">
                         {sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : "—"}

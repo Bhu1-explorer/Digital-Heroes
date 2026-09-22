@@ -53,8 +53,8 @@ export async function signup(formData: FormData) {
   }
 
   // Assuming email confirmation is disabled, user is now logged in.
-  // Redirect them to the subscription page immediately after signup.
-  redirect("/subscribe")
+  // We return success and let the client do a hard redirect to bypass RSC caching issues.
+  return { success: true, redirectTo: "/subscribe" }
 }
 
 export async function login(formData: FormData) {
@@ -82,7 +82,7 @@ export async function login(formData: FormData) {
     return { error: error.message }
   }
 
-  redirect("/dashboard")
+  return { success: true, redirectTo: "/dashboard" }
 }
 
 export async function logout() {

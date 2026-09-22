@@ -37,6 +37,8 @@ export function SignupForm({ charities }: { charities: Charity[] }) {
       const result = await signup(formData)
       if (result?.error) {
         setError(result.error)
+      } else if (result?.success && result.redirectTo) {
+        window.location.href = result.redirectTo
       }
     })
   }

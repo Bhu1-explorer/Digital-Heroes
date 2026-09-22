@@ -125,7 +125,7 @@ export function DrawManager() {
               <h3 className="font-bold text-muted-foreground mb-4">Drawn Numbers</h3>
               <div className="flex justify-center gap-4">
                 {preview.drawNumbers.map((num: number, i: number) => (
-                  <div key={i} className="size-16 rounded-full border-4 border-ink bg-accent flex items-center justify-center font-display text-2xl font-bold shadow-flat-sm">
+                  <div key={i} className="size-16 rounded-full border-4 border-ink bg-accent flex items-center justify-center font-display text-2xl font-bold shadow-flat-sm animate-pop-in" style={{ animationDelay: `${i * 300}ms` }}>
                     {num}
                   </div>
                 ))}

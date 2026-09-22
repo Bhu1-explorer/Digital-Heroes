@@ -103,8 +103,8 @@ export function WinnersTable({ winners }: { winners: any[] }) {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {winners.map(w => (
-              <tr key={w.id} className="hover:bg-muted/50 transition-colors">
+            {winners.map((w, idx) => (
+              <tr key={w.id} className="hover:bg-muted/50 transition-colors animate-slide-in" style={{ animationDelay: `${idx * 30}ms` }}>
                 <td className="px-4 py-3 font-medium">
                   {new Date(w.draws.month).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                 </td>
@@ -157,9 +157,9 @@ export function WinnersTable({ winners }: { winners: any[] }) {
                     {selectedWinner.draw_entries.scores_snapshot.map((s: number, i: number) => {
                       const isMatch = selectedWinner.draws.draw_numbers.includes(s)
                       return (
-                        <div key={i} className={`size-10 rounded-full flex items-center justify-center font-bold ${
+                        <div key={i} className={`size-10 rounded-full flex items-center justify-center font-bold animate-pop-in ${
                           isMatch ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2' : 'bg-muted text-muted-foreground'
-                        }`}>
+                        }`} style={{ animationDelay: `${i * 150}ms` }}>
                           {s}
                         </div>
                       )

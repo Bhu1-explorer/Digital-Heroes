@@ -81,9 +81,9 @@ export default async function AdminSubscriptionsPage({
                 </tr>
               </thead>
               <tbody>
-                {subscriptions?.map((sub) => {
+                {subscriptions?.map((sub, idx) => {
                   return (
-                    <tr key={sub.id} className="border-b last:border-0 hover:bg-muted/20">
+                    <tr key={sub.id} className="border-b last:border-0 hover:bg-muted/20 animate-slide-in" style={{ animationDelay: `${idx * 30}ms` }}>
                       <td className="px-4 py-3 font-medium">
                         {sub.profiles?.full_name || "Unknown"}
                         {sub.admin_override_by && (

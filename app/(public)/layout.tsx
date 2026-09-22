@@ -23,6 +23,9 @@ export default async function PublicLayout({
           
           <nav className="flex items-center gap-2 sm:gap-4">
             <Button variant="ghost" asChild className="hidden sm:inline-flex">
+              <Link href="/">Home</Link>
+            </Button>
+            <Button variant="ghost" asChild className="hidden sm:inline-flex">
               <Link href="/charities">Charities</Link>
             </Button>
             
@@ -47,8 +50,11 @@ export default async function PublicLayout({
             )}
           </nav>
         </div>
-        {/* Mobile secondary nav for charities since it's hidden on very small screens in the main bar */}
-        <div className="sm:hidden border-t-2 border-border/50 px-4 py-2 flex justify-center bg-muted/20">
+        {/* Mobile secondary nav for links since it's hidden on very small screens in the main bar */}
+        <div className="sm:hidden border-t-2 border-border/50 px-4 py-2 flex justify-center gap-6 bg-muted/20">
+          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-ink">
+            Home
+          </Link>
           <Link href="/charities" className="text-sm font-semibold text-muted-foreground hover:text-ink">
             Browse Charities
           </Link>

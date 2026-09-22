@@ -111,12 +111,12 @@ export default async function AdminUsersPage({
                 </tr>
               </thead>
               <tbody>
-                {profiles?.map((user) => {
+                {profiles?.map((user, idx) => {
                   const sub = Array.isArray(user.subscriptions) ? user.subscriptions[0] : user.subscriptions
                   const scoresList = Array.isArray(user.scores) ? user.scores : []
                   
                   return (
-                    <tr key={user.id} className="border-b last:border-0 hover:bg-muted/20">
+                    <tr key={user.id} className="border-b last:border-0 hover:bg-muted/20 animate-slide-in" style={{ animationDelay: `${idx * 30}ms` }}>
                       <td className="px-4 py-3 font-medium">{user.full_name || "Unknown"}</td>
                       <td className="px-4 py-3 text-muted-foreground">{userEmails[user.id] || "—"}</td>
                       <td className="px-4 py-3">

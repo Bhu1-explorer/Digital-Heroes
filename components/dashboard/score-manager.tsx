@@ -110,7 +110,7 @@ export function ScoreManager({ initialScores }: { initialScores: Score[] }) {
           sortedScores.map((score, index) => {
             const isEditing = editingId === score.id
             return (
-              <div key={score.id} className="flex items-center justify-between p-3 border-2 border-border rounded-xl bg-white shadow-flat-sm">
+              <div key={score.id} className="flex items-center justify-between p-3 border-2 border-border rounded-xl bg-white shadow-flat-sm animate-slide-in" style={{ animationDelay: `${index * 30}ms` }}>
                 {isEditing ? (
                   <div className="flex items-center gap-3 flex-1 mr-4">
                     <Input 

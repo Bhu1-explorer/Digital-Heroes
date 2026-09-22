@@ -147,8 +147,8 @@ export function CharitiesClient({ charities, events }: { charities: Charity[], e
                     </tr>
                   </thead>
                   <tbody>
-                    {charities.map((c) => (
-                      <tr key={c.id} className="border-b last:border-0 hover:bg-muted/20">
+                    {charities.map((c, idx) => (
+                      <tr key={c.id} className="border-b last:border-0 hover:bg-muted/20 animate-slide-in" style={{ animationDelay: `${idx * 30}ms` }}>
                         <td className="px-4 py-3 font-medium">
                           {c.name}
                           {c.is_featured && <Badge variant="secondary" className="ml-2 text-[10px]">Featured</Badge>}
@@ -204,8 +204,8 @@ export function CharitiesClient({ charities, events }: { charities: Charity[], e
               </form>
 
               <div className="space-y-4">
-                {events.map(e => (
-                  <div key={e.id} className="p-3 border rounded-lg bg-muted/10 text-sm flex justify-between items-start gap-4">
+                {events.map((e, idx) => (
+                  <div key={e.id} className="p-3 border rounded-lg bg-muted/10 text-sm flex justify-between items-start gap-4 animate-slide-in" style={{ animationDelay: `${idx * 30}ms` }}>
                     <div>
                       <div className="font-bold">{e.name}</div>
                       <div className="text-muted-foreground text-xs">{e.charities?.name} • {new Date(e.date).toLocaleDateString()}</div>

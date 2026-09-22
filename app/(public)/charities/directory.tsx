@@ -61,9 +61,9 @@ export function CharityDirectory({ charities }: { charities: Charity[] }) {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(c => (
+          {filtered.map((c, idx) => (
             <Link key={c.id} href={`/charities/${c.slug}`} className="block group">
-              <Card className="h-full transition-all group-hover:shadow-flat group-hover:-translate-y-1 overflow-hidden flex flex-col">
+              <Card className="h-full transition-all group-hover:shadow-flat group-hover:-translate-y-1 overflow-hidden flex flex-col" style={{ animationDelay: `${idx * 50}ms` }}>
                 <div className="relative h-48 w-full border-b-2 border-border bg-muted flex items-center justify-center overflow-hidden">
                   {c.image_url ? (
                     <Image src={c.image_url} alt={c.name} fill className="object-cover" />

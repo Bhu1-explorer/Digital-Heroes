@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StatusBadge } from "@/components/ui/badge"
 import { Trophy, Loader2Icon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function WinningsManager({ winners }: { winners: any[] }) {
   const [isPending, startTransition] = useTransition()
@@ -45,14 +46,14 @@ export function WinningsManager({ winners }: { winners: any[] }) {
           </CardContent>
         </Card>
       ) : (
-        winners.map((w) => {
+        winners.map((w, idx) => {
           const isPaid = w.payment_status === "paid"
           const status = w.verification_status
           const monthStr = new Date(w.draws.month).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
           const statusStr = isPaid ? "paid" : status
 
           return (
-            <Card key={w.id} className={status === "rejected" ? "border-destructive ring-2 ring-destructive/20" : ""}>
+            <Card key={w.id} className={cn("animate-slide-in", status === "rejected" ? "border-destructive ring-2 ring-destructive/20" : "")} style={{ animationDelay: `${idx * 50}ms` }}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <div>
                   <CardTitle>{monthStr} Draw - Match {w.tier}</CardTitle>
